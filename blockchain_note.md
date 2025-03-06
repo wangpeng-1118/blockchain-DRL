@@ -644,3 +644,4 @@ contract HackV2 {
 
 DAO(Decentralized Autonomous Organization):去中心化的自治组织
 
+区块链上，DAO组织的规章制度写在代码里，由区块链的共识协议来维护规章制度的正常执行
