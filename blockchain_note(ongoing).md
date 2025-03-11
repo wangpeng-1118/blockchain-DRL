@@ -1,3 +1,71 @@
+# 比特币
+
+## 密码学原理
+
+输入空间远远大于输出空间，哈希碰撞不可避免
+
+collision：x $ \neq $ y，H(x) = H(y)
+
+**collision resistance**：哈希碰撞避免（没有人为的办法制造哈希碰撞，理论上无法被数学证明）
+
+作用：求一个message的digest（信息摘要），文件被修改之后，它的哈希值也会被修改
+
+**hiding**：从哈希值无法反推出输入，除非遍历所有可能的输入
+
+digital commitment：digital equivalent of a sealed envelope(密封信封的数字等价物,数字签名)
+
+实际中在输入中添加一个nonce，以保证输入的随机性
+
+**Puzzle friendly**：用于比特币里面的PoW
+
+创建用户：建立一对密钥
+
+非对称加密体系：公钥加密，私钥解密
+
+私钥签名，公钥验证
+
+## BTC-数据结构
+
+Block chain is a linked list using hash pointers
+
+Merkle tree（哈希指针代替了普通指针）：只要记住root hash，就能检测出树中任意地方的修改
+
+每个区块所包含的交易组织成一个Merkle tree
+
+Merkle tree 的root hash存在block header中，交易列表存在block body中
+
+![Merble tree](pictures\20250309145445.png)
+
+**比特币的全节点**（Full Node）确实保存了 **整个区块链中的所有区块的全部信息**，并且参与了区块链网络的验证和传播工作。
+
+**轻节点（SPV 节点）**只保存 **当前与自己相关的区块头**，而不是所有区块头。
+
+一个区块头包含：
+
+* `version`：版本号
+
+- `previous block hash`：前一个区块的哈希值
+- `merkle root`：该区块的 Merkle 树根哈希
+- `timestamp`：区块的时间戳
+- `target`：目标难度（用于工作量证明）
+- `nonce`：用来调整工作量证明的值
+
+proof of membership:时间复杂度$ O(\log_2(n)) $ 
+
+proof of non-membership:如果叶节点按照哈希值排序之后就只需要验证相关交易前后两个交易，BTC中没有这种验证需求
+
+只要数据结构是无环的，均可以用哈希指针代替普通地址指针
+
+## BTC-协议
+
+double spending sttack
+
+为防范double spending：需要额外的哈希指针指向之前的交易，
+
+例如A给B转账十个bitcoin，A的10个比特币来自铸币交易，那么铸币里面会有A的公钥的哈希，来自A的交易里面的A的公钥要和前面铸币交易里面的A的公钥的哈希对得上
+
+# 以太坊
+
 ## ETH-GHOST
 
 ETH十几秒就出一次矿，但是bitcoin和Ethereum都是运行在应用层的共识协议，底层依赖P2P协议进行传播，区块发布之后传到网络上需要十几秒的时间，当两个矿工几乎同时挖到矿的时候区块链上面就会产生临时性的分叉，这种分叉在Ethereum上面就比较常见。Ethereum中产生分支之后如果没有构成最长合法链的那个区块直接作废就对个体矿工十分不公平(正常情况下我们认为矿工得到的收益应该与拥有的算力成比例，如果个体矿工和矿池同时挖到矿形成分叉，个体矿工通常竞争不过矿池，矿池算力更强，在区块中占领的位置较好其他矿工会先收到矿池挖的区块，这样会造成恶行循环，也叫centralization bias)
