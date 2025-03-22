@@ -64,6 +64,22 @@ double spending sttack
 
 例如A给B转账十个bitcoin，A的10个比特币来自铸币交易，那么铸币里面会有A的公钥的哈希，来自A的交易里面的A的公钥要和前面铸币交易里面的A的公钥的哈希对得上
 
+**Distributed hash table**:系统中很多台机器共同维护一个哈希表
+
+FLP impossibility result：asynchronous(异步的，传输时延没有上限) system中，即使只有一个成员有问题（faulty），也无法达成共识
+
+CAP Theorem（consistency， availability， partition tolerance：分区容错性）：任何一个分布式系统最多只可能满足前面提到的两个性质
+
+**consensus in bitcoin**：$H(block header) \leqslant target$ 投票与算力有关
+
+**longest valid chain**:接收的区块应该是接在最长合法链中的
+
+**forking attack**
+
+**block reward**：(coinbase transaction出币交易)
+
+BTC总量:$21W \times 50 \times (1 + \frac{1}{2} \times \frac{1}{4} \dots) = 2100W$  
+
 # 以太坊
 
 ## ETH-GHOST
