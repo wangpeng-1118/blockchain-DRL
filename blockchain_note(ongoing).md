@@ -80,6 +80,119 @@ CAP Theorem（consistency， availability， partition tolerance：分区容错�
 
 BTC总量:$21W \times 50 \times (1 + \frac{1}{2} \times \frac{1}{4} \dots) = 2100W$  
 
+## BTC-实现
+
+**UTXO(Unspent Transaction Output)**:未被花掉的Bitcoin的交易记录会被保存到UTXO中，用于检测新发布的交易是否合法
+
+**Transaction Fee**
+
+修改铸币交易中Coinbase中的内容，进而改变Merkle Root Hash的值，以达到增加哈希搜索空间的目的
+
+挖矿的每一次尝试都可以看作一次Bernoulli trial（a random experiment with binary outcome)
+
+Bernoulli process : a sequence of independent Bernoulli trials
+
+概率P很小，尝试的次数N很大，Bernoulli process可以使用Poisson process近似
+
+出矿时间服从指数分布，过去的工作对后面出矿的概率没有影响(progress free)
+
+progress free保证了矿工的优势和算力的优势成立比，不会因为之前做的工作多而产生碾压式的优势
+
+Bitcoin is secured by mining：只要大部分的算力掌握在诚实的人的手里，BTC系统的安全性就能得以保证
+
+BTC系统规定，每个区块只能有1MB大小，某个时间段交易数量太多可能会导致一些交易无法及时发布到区块链上
+
+selfish mining:自己挖很多个区块，某个时间段一次性发布（回滚以前的交易，也可以用于浪费其他人的算力）
+
+## BTC-网络
+
+application layer: BitCoin Block chain
+
+network layer: P2P Overlay Network
+
+simple, robust,  but not efficient
+
+means of communication : flooding(unrelated to actual physical distance)
+
+对一个节点来说，已经转发过的交易就不会再转发了
+
+## BTC-挖矿难度
+
+分叉变多，网络中的算力被分散，恶意节点的分叉攻击会变得相对容易
+
+调整target
+$$
+target = target \times \frac{actual\_time}{expected\_time}
+$$
+$actual\_time$ 会被设置一个上下限
+
+## BTC-挖矿
+
+密码学和共识机制保证比特币的安全
+
+ASIC：Application-Specific Integrated Circuit
+
+大型矿池：矿主管理许多矿工，挖到矿之后将收益进行分配，矿池的矿工可以使用almost valid block来进行自己的工作证明（没有其他用处）
+
+矿池的危害：攻击者只需要吸引大量不明真相的矿工来为自己挖矿，就可以发起一次进攻
+
+攻击方式：分叉攻击（回滚部分交易），封锁账户攻击（当某个区块包含特定账户的交易时，立即进行分叉攻击）
+
+## BTC-脚本
+
+后面一个交易的input部分和前一个交易的output拼接执行
+
+```BTCscripting
+PUSHDATA(sig)      //入栈
+PUSHDATA(PubKey)   //入栈
+CHECKSIG           //检验
+```
+
+**P2PKH(Pay to Public Key Hash)**
+
+```BTCscript
+input script:
+	PUSHDATA(Sig)
+	PUSHDATA(PubKey)
+output script:
+	DUP						//copy栈顶元素
+	HASH160					//取栈顶元素，求hash再压入栈
+	PUSHDATA(PubKeyHash)	//让之前账户的收款人的公钥哈希入栈
+	EQUALVERIFY				//弹出栈顶的两个元素（公钥哈希）判断是否相等
+	CHECKSIG
+```
+
+**使用P2SH实现多重签名**
+
+```BTCscript
+input acript:
+	false							//无意义，用于应付CHECKMULTISIG的bug
+	PUSHDATA(Sig_1)
+	PUSHDATA(Sig_2)
+	...
+	PUSHDATA(Sig_M)
+	PUSHDATA(serialized RedeemScript)
+output script:
+	HASH160
+	PUSHDATA(RedeemScriptHash)
+	EQUAL
+```
+
+**P2SH**第二个阶段执行
+
+```BTCscript
+2
+PUSHDATA(pubkey_1)
+PUSHDATA(pubkey_2)
+PUSHDATA(pubkey_3)
+3
+CHECKMULTISIG				//用于检验多重签名
+```
+
+Proof of Burn：在交易的output中加入return语句，无论input怎么设计，执行到return时，交易就会失败，这是用于证明销毁BTC的一种方法，也可以用于往区块链中写一些东西（比如将知识产权的东西的hash值写到return语句的后面）
+
+前面提到的往Coinbase中写数据的方法只有获得记账权的节点才能使用，这个方法所有的节点或用户都可以使用
+
 # 以太坊
 
 ## ETH-GHOST
