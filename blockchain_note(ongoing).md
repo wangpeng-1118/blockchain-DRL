@@ -193,6 +193,14 @@ Proof of Burn：在交易的output中加入return语句，无论input怎么设�
 
 前面提到的往Coinbase中写数据的方法只有获得记账权的节点才能使用，这个方法所有的节点或用户都可以使用
 
+## BTC分叉
+
+state fork：对区块链当前的状态有分歧导致的分叉，例如攻击导致的forking attack和协议改变导致的protocol fork
+
+hard fork & soft fork：软分叉短暂存在，硬分叉一直存在
+
+可能出现软分叉的情况：给某些目前协议中没有规定的域增加一些新的含义，例如coinbase域被赋予意义（比如有人建议coinbase作为UTXO集合的根哈希值）
+
 # 以太坊
 
 ## ETH-GHOST

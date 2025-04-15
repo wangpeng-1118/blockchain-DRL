@@ -1,4 +1,4 @@
-# reinforcement learning
+# RL基础概念
 
 * Model-free RL
 * Model-Based RL
@@ -136,7 +136,7 @@ $$
 
 求法：把$U_t$ 看成未来所有动作$\{A_t, A_{t + 1}, A_{t + 2}, ...\}$和未来所有状态$\{S_t, S_{t + 1}, S_{t + 2}, ...\}$ 的函数，$s_t$和$a_t$作为观测值，其他的看成变量并对其经行积分。
 
-
+被积分积掉的是$A_{t + 1}$ $A_{t + 2}$ $S_{t + 1}$ $S_{t + 2}$ 这些状态
 
 $Q_{\pi}(s_t, a_t)$ 的直观意义：如果用policy函数$\pi$ ，在$s_t$这个状态之下做动作$a_t$ 的好坏。
 
@@ -146,3 +146,56 @@ $$
 Q^{*}(s_t, a_t) = \underset{\pi}{max}Q_{\pi}(s_t, a_t)
 $$
 
+$Q^*$ :可以在$s_t$ 状态下，进行动作$a_t$ 的价值
+
+agent可以通过$Q^*$ 对动作的评测来进行决策
+
+## State-value function
+
+$$
+V_{\pi}(S_t) = \mathbb{E}_A[Q_\pi(S_t, A)]=\sum_a \pi(a\mid s_t)\cdot Q_{\pi}(s_t, a).
+$$
+
+$$
+V_{\pi}(S_t) = \mathbb{E}_A[Q_\pi(S_t, A)]=\int \pi(a\mid s_t)\cdot Q_{\pi}(s_t, a)\,da
+$$
+
+$V_\pi$ 可以告诉我们当前的局势情况，同时也可以评价$\pi$ 的好坏，如果policy函数$\pi$ 越好，则$V_{\pi}$ 的平均值越大
+
+**How does AI control the agent?**
+
+* Suppose we have a good policy $\pi (a\mid s)$ .Upon observe the state $S_t$ ,we get a random sampling:$a_t \sim \pi (a\mid s_t)$.
+
+* Suppose we know optimal action-value function $Q^*(s \mid a)$ .Upon observe the state $s_t$ , choose the action that maximizes the value:$a_t = argmax_a Q^* (s_t, a)$.
+
+# 价值学习
+
+Approximate $Q^*(s, a)$ using a neural network (DQN)
+
+* $Q(s, a; w)$ is a neural network parameterized by $w$ .
+
+* Input: observed state $s$ .
+
+* Output:scores for every action $a$ .
+
+Algorithm: One iteration of TD learning
+
+* Observe state $S_t = s_t$ and action $A_t = a_t$ .
+* Predict the value: $q_t = Q(s_t, a_t; W_t)$ .
+* Differentiate the value network: $\mathbf{d} t = \frac{\partial Q(s_t, a_t; \mathbf{w})}{\partial \mathbf{w}}\mid _{\mathbf{w} = \mathbf{w_t}}$ .
+* Environment provides new state $s_{t+1}$ and reward $r_t$ .
+* Compute TD target: $y_t = r_t + \gamma * \underset{a}{max} {Q(s_{t + 1}, a;\mathbf{W_t})}$ .
+* Gradient descent: $W_{t+ 1} = W_{t} = \alpha * (q_t - y_t) * \mathbf{d}t$ .
+
+# 策略学习
+
+Policy network: Use a neural net to approximate $\pi (a\mid s)$.
+
+* Use policy network $\pi(a\mid s; \theta)$
+* $\theta$:trainable parameters of the neural net.
+* $V(s; \theta) = \sum_a \pi(a\mid s;\theta) * Q_{\pi}(s, a).$ 
+
+How to improve $\theta$ ? Policy gradient ascent
+
+* Observe state $s$.
+* Update policy by :$\theta  = \theta + \beta * \frac{\partial V(s; \theta)}{\partial \theta}$.
