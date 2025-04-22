@@ -37,6 +37,30 @@ contribution：
 
 ==奇异值分解==
 
+#  Motivation
+
+现代LLM服务系统，如DeepSpeed和FlexGen，已经支持将模型权重或KV缓存卸载到CPU内存。当涉及到基于卸载的推理系统时，KV缓存大小变得更加成问题，这是由于CPU和GPU之间的低PCIe带宽，它成为了新的关键瓶颈
+
+尽管通过量化压缩KV缓存可以潜在地减少基于卸载的系统中的数据传输开销，但这并不是一个根本性的解决方案，因为量化并没有解决KV缓存问题的根本原因，即KV条目随着序列长度的线性增长
+
+**Challenges in KV Cache Management**: 减轻KV缓存从CPU到GPU的传输开销的根本方法是通过识别计算注意力分数的关键键和值来减少要加载的KV缓存的量
+
+先前的关于管理KV缓存的工作并不能有效地解决基于卸载的推理系统中的以下挑战
+
+* Dynamic nature of attention patterns across iterations(迭代间注意力模式的动态性)：在当前迭代中被认为不重要的标记可能在后续迭代中变得重要。因此，H2O在序列长度超过KV缓存预算时开始与动态注意力模式作斗争，导致余弦相似度低于Optimal情况
+* **Adjusting the number of KV entries across layers（跨层调整KV条目数量）**:不同层对KV缓存的需求不同，我们需要跨不同层动态调整参与注意力计算的关键标记数量，以有效利用KV缓存预算
+* **Adjusting the number of KV entries across queries（跨查询调整KV条目数量）**：
+
+# InfiniGen Design
+
+## Overview
+
+InfiniGen的核心设计理念是利用丰富的CPU内存容量，以增加在KV缓存中识别重要token的窗口大小。
+
+并不会将整个KV Cach保存在GPU中，二十仅加载少数几个重要token的key和value，动态地丢弃其他不重要的KV Cache。
+
+
+
 
 
 
