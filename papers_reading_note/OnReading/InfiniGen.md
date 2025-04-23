@@ -59,6 +59,12 @@ InfiniGen的核心设计理念是利用丰富的CPU内存容量，以增加在KV
 
 并不会将整个KV Cach保存在GPU中，二十仅加载少数几个重要token的key和value，动态地丢弃其他不重要的KV Cache。
 
+InfiniGen 不是直接通过列求和找 token，而是通过列求和找“最重要的维度（列）”，然后**再在这些维度上看哪些 token（行）值最大**，从而判断最关键的 token。
+
+因为 Transformer 的 Attention 是**点积**，如果某些维度（列）在 Q 和 K 中都很大，就会对 Attention 分数贡献非常大；
+
+只使用上面的方法求出来的列进行attention权重的计算，然后在decode阶段选择权重位于$[max - \alpha, max]$的token进行计算
+
 
 
 
