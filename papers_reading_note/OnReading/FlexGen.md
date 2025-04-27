@@ -1,6 +1,6 @@
 # Abstract
 
-FlexGen，这是一个用于在有限 GPU 内存下运行 LLM 的高吞吐量生成引擎。FlexGen 可以根据不同的硬件资源约束灵活配置，通过聚合 GPU、CPU 和磁盘的内存和计算能力来实现高效运行。
+FlexGen，通过聚合 GPU、CPU 和磁盘的内存和计算能力来实现高效运行。
 
 ==通过求解线性规划问题，FlexGen 搜索存储和访问张量的高效模式，并进一步将权重和注意力缓存压缩到 4 位，几乎不损失精度。==
 
@@ -29,8 +29,8 @@ HELM benchmark（Holistic Evaluation of Language Models）：一个专门用于�
 以往研究的三个方向：
 
 * （1）通过模型压缩减少总内存占用（Dettmers et al., 2022; Yao et al., 2022; Frantar et al., 2022; Xiao et al., 2022）；
-* （2）通过去中心化进行协作推理，以分摊推理成本（Borzunov et al., 2022）；以及
-* （3）通过将数据卸载到 CPU 和磁盘来利用内存（Aminabadi et al., 2022; HuggingFace, 2022）
+* （2）通过去中心化进行协作推理，以分摊推理成本（Borzunov et al., 2022）；
+* （3）通过将数据卸载到 CPU 和磁盘来利用内存（Aminabadi et al., 2022; HuggingFace, 2022）；
 
 第三类中现有的基于卸载的系统在单个 GPU 上无法实现可接受的吞吐量，因为它们的 I/O 调度和张量放置效率低下。
 
@@ -57,7 +57,7 @@ HELM benchmark（Holistic Evaluation of Language Models）：一个专门用于�
 
 **以算法为导向的工作relax certain aspects of computation**(放宽某些具体方面的计算要求):
 
-* 在精度方面，使用FP32浮点数改为FP16，INT8混合精度计算
+* s在精度方面，使用FP32浮点数改为FP16，INT8混合精度计算
 * 注意力计算方面，全量注意力（O($n^2$)）改为稀疏注意力、局部注意力
 * KV Cache更新方面，每一步更新完整缓存改为滑动窗口或者只更新一部分
 * Transformer层计算方面，对所有Transformer层的全计算改为Layer Skipping，Early Exit
